@@ -1,9 +1,13 @@
 """
 TEST for models
 """
+from decimal import Decimal
+
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 
+#when we use other model we have to use that directly
+from core import models
 
 class ModelTests(TestCase):
     """Test models"""
@@ -49,3 +53,22 @@ class ModelTests(TestCase):
 
         self.assertTrue(user.is_superuser)
         self.assertTrue(user.is_staff)
+
+
+    def test_create_recipe(self):
+        """Test creating a recipe is successful"""
+        # creating user so it assign to the the recipe
+        user = get_user_model().objects.create_user(
+            'test@example.com'
+            'testpass123'
+        )
+        recipe = models.Recipe.objects.create(
+            user=user,
+            title='sample recipe name',
+            time_minutes=5,
+            # better use integer
+            price=Decimal('5.50'),
+            description='sample recipe description',
+        )
+        # here string representation I use a logic in model that convers the model to title
+        self.assertEqual(str(recipe), recipe.title)

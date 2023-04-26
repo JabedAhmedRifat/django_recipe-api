@@ -35,8 +35,11 @@ class PublicUserApiTests(TestCase):
         res = self.client.post(CREATE_USER_URL, payload)
 
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        # retrieve email from payload
         user = get_user_model().objects.get(email=payload['email'])
+        # check the email by using check password
         self.assertTrue(user.check_password(payload['password']))
+        # for security issue pass will not response
         self.assertNotIn('password',res.data)
 
     def test_user_with_email_exists_error(self):
@@ -46,6 +49,7 @@ class PublicUserApiTests(TestCase):
             'password': 'testpass123',
             'name': 'Test Name',
         }
+        # use **payload so that dont have to write email password
         create_user(**payload)
         res = self.client.post(CREATE_USER_URL,payload)
 
