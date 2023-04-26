@@ -141,13 +141,13 @@ class PrivateRecipeApiTests(TestCase):
             user=self.user,
             title='Sample recipe title',
             link='https://example.com/recipe.pdf',
-            description='Sample recipe description',
+            description='Sample recipe description.',
         )
 
-        payload={
+        payload = {
             'title': 'New recipe title',
             'link': 'https://example.com/new-recipe.pdf',
-            'description': 'New recipe description',
+            'description': 'New recipe description.',
             'time_minutes': 10,
             'price': Decimal('2.50'),
         }
@@ -160,13 +160,14 @@ class PrivateRecipeApiTests(TestCase):
             self.assertEqual(getattr(recipe, k), v)
         self.assertEqual(recipe.user, self.user)
 
-    def test_update_users_returns_error(self):
+    def test_update_user_returns_error(self):
         """Test changing the recipe user results in an error."""
         new_user = create_user(email='user2@example.com',password='test123')
         recipe = create_recipe(user=self.user)
 
         payload = {'user': new_user.id}
         url = detail_url(recipe.id)
+        #here self delete it self own url not newuser
         self.client.patch(url, payload)
 
         recipe.refresh_from_db()
@@ -181,3 +182,16 @@ class PrivateRecipeApiTests(TestCase):
 
         self.assertEqual(res.status_code, status.HTTP_204_NO_CONTENT)
         self.assertFalse(Recipe.objects.filter(id=recipe.id).exists())
+
+
+    def test_delete_other_users_recipe_error(self):
+        """test trying to delete another users recipe gives error."""
+        new_user = create_user(email='user2@example.com',password='test123')
+        recipe = create_recipe(user=new_user)
+
+        url = detail_url(recipe.id)
+        #here self cant delete new user passing new recipe
+        res = self.client.delete(url)
+
+        self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertTrue(Recipe.objects.filter(id=recipe.id).exists())
