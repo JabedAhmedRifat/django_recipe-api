@@ -13,12 +13,11 @@ from core.models import Tag
 
 from recipe.serializers import TagSerializer
 
-TAG_URLS = reverse('recipe:tag-list')
+TAGS_URL = reverse('recipe:tag-list')
 
 def detail_url(tag_id):
     """Create and return a tag detail url."""
     return reverse('recipe:tag-detail',args=[tag_id])
-
 
 
 def create_user(email='user@example.com', password='testpass123'):
@@ -34,7 +33,7 @@ class PublicTagsApiTests(TestCase):
 
     def test_auth_required(self):
         """Test auth is required for retrieving tags."""
-        res = self.client.get(TAG_URLS)
+        res = self.client.get(TAGS_URL)
 
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
@@ -52,7 +51,7 @@ class PrivateTagsApiTests(TestCase):
         Tag.objects.create(user=self.user, name='vegan')
         Tag.objects.create(user=self.user, name='dessert')
 
-        res = self.client.get(TAG_URLS)
+        res = self.client.get(TAGS_URL)
 
         tags = Tag.objects.all().order_by('-name')
         serializer = TagSerializer(tags, many=True)
@@ -67,7 +66,7 @@ class PrivateTagsApiTests(TestCase):
         Tag.objects.create(user=user2, name='Fruty')
         tag = Tag.objects.create(user=self.user , name='comfort food')
 
-        res = self.client.get(TAG_URLS)
+        res = self.client.get(TAGS_URL)
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(len(res.data),1)

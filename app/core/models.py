@@ -54,7 +54,7 @@ class Recipe(models.Model):
     time_minutes = models.IntegerField()
     price = models.DecimalField(max_digits=5, decimal_places=2)
     link = models.CharField(max_length=255, blank=True)
-    tag = models.ManyToManyField('Tag')
+    tags = models.ManyToManyField('Tag')
 
     #django default name na diye title r string ta represent korbe
     def __str__(self):
