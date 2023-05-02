@@ -40,7 +40,7 @@ class PublicUserApiTests(TestCase):
         # check the email by using check password
         self.assertTrue(user.check_password(payload['password']))
         # for security issue pass will not response
-        self.assertNotIn('password',res.data)
+        self.assertNotIn('password', res.data)
 
     def test_user_with_email_exists_error(self):
         """Test error returned if user with email exists"""
@@ -51,7 +51,7 @@ class PublicUserApiTests(TestCase):
         }
         # use **payload so that dont have to write email password
         create_user(**payload)
-        res = self.client.post(CREATE_USER_URL,payload)
+        res = self.client.post(CREATE_USER_URL, payload)
 
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -69,7 +69,6 @@ class PublicUserApiTests(TestCase):
             email=payload['email']
         ).exists()
         self.assertFalse(user_exists)
-
 
     def test_create_token_for_user(self):
         """Test generates token for valid credentials"""
@@ -89,12 +88,11 @@ class PublicUserApiTests(TestCase):
         self.assertIn('token', res.data)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
 
-
     def test_create_token_bad_credentials(self):
         """Test returns error if credentials invalid."""
-        create_user(email='test@example.com',password='goodpass')
+        create_user(email='test@example.com', password='goodpass')
 
-        payload = {'email': 'test@example.com', 'password':'badpass'}
+        payload = {'email': 'test@example.com', 'password': 'badpass'}
         res = self.client.post(TOKEN_URL, payload)
 
         self.assertNotIn('token', res.data)
@@ -102,7 +100,7 @@ class PublicUserApiTests(TestCase):
 
     def test_create_token_blank_password(self):
         """Test posting a blank password as error"""
-        payload = {'email':'test@example.com','password':''}
+        payload = {'email': 'test@example.com', 'password': ''}
         res = self.client.post(TOKEN_URL, payload)
 
         self.assertNotIn('token', res.data)
@@ -147,7 +145,7 @@ class PrivateUserApiTests(TestCase):
         """test update profile allowed for logged in user"""
         payload = {'name': 'change name', 'password': 'newpassword'}
 
-        res = self.client.patch(ME_URL,payload)
+        res = self.client.patch(ME_URL, payload)
 
         self.user.refresh_from_db()
         self.assertEqual(self.user.name, payload['name'])
