@@ -87,21 +87,19 @@ class RecipeSerializer(serializers.ModelSerializer):
         return instance
 
 
-
-
 # working with excisting serializers fields so that no code duplicate
 class RecipeDetailSerializer(RecipeSerializer):
     """serializer for details recipes view."""
 
     class Meta(RecipeSerializer.Meta):
-        fields = RecipeSerializer.Meta.fields + ['description']
+        fields = RecipeSerializer.Meta.fields + ['description', 'image']
 
 
 class RecipeImageSerializer(serializers.ModelSerializer):
     """Serializer for uploading Images to recipes."""
 
     class Meta:
-        models = Recipe
+        model = Recipe
         fields = ['id', 'image']
         read_only_fields = ['id']
         extra_kwargs = {'image': {'required': 'True'}}
